@@ -91,6 +91,8 @@ namespace Project_HR.Controllers
             ja.Offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == ja.OfferId);
             ja.Offer.Company = await _context.Company.FirstOrDefaultAsync(x => x.Id == ja.Offer.CompanyId);
             await _context.JobApplication.AddAsync(ja);
+            ja.Offer.JobApplication.Add(ja);
+            _context.Update(ja.Offer);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
