@@ -24,7 +24,16 @@ namespace Project_HR.Controllers
             var dataContext = _context.JobApplication.Include(j => j.Offer).Include(j => j.User);
             return View(await dataContext.ToListAsync());
         }
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
+        {
+            if (string.IsNullOrEmpty(searchString))
+                return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).ToListAsync());
 
+            List<JobApplication> searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User)
+                .Where(j => j.Offer.JobTitle.Contains(searchString)).ToListAsync();
+            return View(searchResult);
+        }
         // GET: JobApplications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -45,23 +54,18 @@ namespace Project_HR.Controllers
             return View(jobApplication);
         }
 
-        // GET: JobApplications/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int? offerId)
         {
-            ViewData["OfferId"] = new SelectList(_context.JobOffer, "Id", "Description");
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "EmailAdress");
-            return View();
+            if (offerId == null)
+            {
+                return BadRequest($"id should not be null");
+            }
+            var model = new JobApplication();
+            model.Offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == offerId);
+            model.OfferId = offerId ?? default(int);
+            model.Offer.Company = await _context.Company.FirstOrDefaultAsync(x => x.Id == model.Offer.CompanyId);
+            return View(model);
         }
-        //public async Task<IActionResult> Create(int? offerId)
-        //{
-        //    if (offerId == null)
-        //    {
-        //        return BadRequest($"id should not be null");
-        //    }
-        //    var model = new JobApplication();
-        //    model.Offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == offerId);
-        //    return View();
-        //}
 
 
         // POST: JobApplications/Create
@@ -69,17 +73,26 @@ namespace Project_HR.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,OfferId,ContactAgreement,CvUrl,UserId")] JobApplication jobApplication)
+        public async Task<IActionResult> Create(JobApplication model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(jobApplication);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            ViewData["OfferId"] = new SelectList(_context.JobOffer, "Id", "Description", jobApplication.OfferId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "EmailAdress", jobApplication.UserId);
-            return View(jobApplication);
+            JobApplication ja = new JobApplication
+            {
+                Id = model.Id,
+                OfferId = model.OfferId,
+                UserId = 2,
+                CvUrl = model.CvUrl,
+                ContactAgreement = model.ContactAgreement
+            };
+            ja.User = await _context.User.FirstOrDefaultAsync(x => x.Id == ja.UserId);
+            ja.Offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == ja.OfferId);
+            ja.Offer.Company = await _context.Company.FirstOrDefaultAsync(x => x.Id == ja.Offer.CompanyId);
+            await _context.JobApplication.AddAsync(ja);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
 
         // GET: JobApplications/Edit/5

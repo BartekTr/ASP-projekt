@@ -55,7 +55,7 @@ namespace Project_HR.Controllers
                 return NotFound($"offer not found in DB");
             }
 
-            return RedirectToAction("Create", "JobApplications");
+            return RedirectToAction("Create", "JobApplications", new { offerId = id});
         }
 
         [HttpPost]
