@@ -43,6 +43,21 @@ namespace Project_HR.Controllers
             return View(offer);
         }
 
+        public async Task<IActionResult> Applicate(int? id)
+        {
+            if (id == null)
+            {
+                return BadRequest($"id shouldn't not be null");
+            }
+            var offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == id.Value);
+            if (offer == null)
+            {
+                return NotFound($"offer not found in DB");
+            }
+
+            return RedirectToAction("Create", "JobApplications", new { offerId = id});
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(JobOffer model)

@@ -1,0 +1,42 @@
+﻿@model Project_HR.Models.JobApplication
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>JobApplication</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ContactAgreement)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ContactAgreement)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CvUrl)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CvUrl)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Offer)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Offer.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.EmailAdress)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
