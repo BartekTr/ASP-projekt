@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project_HR.Models
 {
@@ -11,9 +12,12 @@ namespace Project_HR.Models
         }
 
         public int Id { get; set; }
+        [Display(Name = "Job title")]
         public string JobTitle { get; set; }
         public int CompanyId { get; set; }
+        [Display(Name = "Salary from")]
         public decimal? SalaryFrom { get; set; }
+        [Display(Name = "Salary to")]
         public decimal? SalaryTo { get; set; }
         public DateTime Created { get; set; }
         public string Location { get; set; }
