@@ -9,6 +9,7 @@ using Project_HR.Models;
 
 namespace Project_HR.Controllers
 {
+    [Route("[controller]/[action]")]
     public class JobApplicationsController : Controller
     {
         private readonly DataContext _context;
@@ -19,6 +20,7 @@ namespace Project_HR.Controllers
         }
 
         // GET: JobApplications
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Index()
         {
             var dataContext = _context.JobApplication.Include(j => j.Offer).Include(j => j.User);
@@ -35,6 +37,7 @@ namespace Project_HR.Controllers
             return View(searchResult);
         }
         // GET: JobApplications/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -54,6 +57,7 @@ namespace Project_HR.Controllers
             return View(jobApplication);
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Create(int? offerId)
         {
             if (offerId == null)
@@ -98,6 +102,7 @@ namespace Project_HR.Controllers
         }
 
         // GET: JobApplications/Edit/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -153,6 +158,7 @@ namespace Project_HR.Controllers
         }
 
         // GET: JobApplications/Delete/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

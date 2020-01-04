@@ -19,6 +19,7 @@ namespace Project_HR.Controllers
             _context = context;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public ActionResult Index()
         {
             return View();
@@ -70,6 +71,7 @@ namespace Project_HR.Controllers
         //    List<JobOffer> searchResult = await _context.JobOffer.Include(x => x.Company).Where(o => o.JobTitle.Contains(searchString)).ToListAsync();
         //    return View(searchResult);
         //}
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +87,7 @@ namespace Project_HR.Controllers
             return View(offer);
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Applicate(int? id)
         {
             if (id == null)
@@ -130,6 +133,7 @@ namespace Project_HR.Controllers
             return RedirectToAction("Index");
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> Create()
         {
             var model = new JobOfferCreateView
@@ -168,6 +172,7 @@ namespace Project_HR.Controllers
             return RedirectToAction("Index");
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Details(int id)
         {
             var offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == id && x.Company != null);
