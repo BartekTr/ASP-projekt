@@ -13,6 +13,7 @@ namespace Project_HR.Models
 
         public int Id { get; set; }
         [Display(Name = "Job title")]
+        [Required]
         public string JobTitle { get; set; }
         public int CompanyId { get; set; }
         [Display(Name = "Salary from")]
@@ -24,6 +25,7 @@ namespace Project_HR.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyy-MM-dd}")]
         public DateTime Created { get; set; }
         public string Location { get; set; }
+        [Required]
         public string Description { get; set; }
         public DateTime? ValidUntil { get; set; }
         public int? Hrid { get; set; }
