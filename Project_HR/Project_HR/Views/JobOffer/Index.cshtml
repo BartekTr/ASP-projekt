@@ -12,12 +12,11 @@
             </span>
         </div>
         <div id="updatePanel">
-
         </div>
+        Page size: <input type="number" name="paginator" id="pag" value="4" oninput="fetchData(1)" />
+        <br /><br />
         @Html.ActionLink("Create job offer", "Create", "JobOffer", null, new { @class = "btn btn-primary" })
-
     </div>
-
 </div>
 
 
@@ -29,10 +28,26 @@
         });
 
         function parseDate(date) {
-            console.log(date);
-            console.log(date.substr(0, 10) + date.substr(12, 22));
-            console.log(date.toString().substr(0, 10) + " " + date.toString().substr(11, 10));
             return date.toString().substr(0, 10) + " " + date.toString().substr(11, 8);
+        }
+
+        function getCompany(id) {
+            var comp;
+            $.ajax({
+                async: false,
+                url: '/JobOffer/GetCompany',
+                type: 'GET',
+                data: { id: id },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    comp = data;
+                },
+                error: function () {
+                    alert('sth wrg.');
+                }
+            });
+            return comp;
         }
 
         function fetchData(pageNo) {
@@ -41,20 +56,21 @@
             $.ajax({
                 url: '/JobOffer/GetData',
                 type: 'GET',
-                data: { pageNo: pageNo, search: $("#mysearch").val() },
+                data: { pageNo: pageNo, search: $("#mysearch").val(), pageSize: $("#pag").val() },
                 dataType: 'json',
                 success: function (data) {
                     var $table = $('<table/>').addClass('table table-striped table-hover');
                     var $header = $('<thead/>').addClass('thead-dark')
                     $header.html('<tr><th style="background-color: Gray;color: #33b5e5">Job Title </th >' +
+                        '<th style="background-color: Gray;color: #33b5e5">Company Name</th>' +
                         '<th style="background-color: Gray;color: #33b5e5">Location</th>' +
                         '<th style="background-color: Gray;color: #33b5e5">Created</th></tr > ');
                     $table.append($header);
                     $.each(data.jobOffers, function (i, emp) {
                         var $row = $('<tr/>');
                         $row.append($('<td/>').html('<a href="/JobOffer/Details/?id=' + emp.id + '">' + emp.jobTitle + '</a>'));
+                        $row.append($('<td/>').html(getCompany(emp.companyId)));
                         $row.append($('<td/>').html(emp.location));
-                        //var dout = Date.parse(emp.created);
                         $row.append($('<td/>').html(parseDate(emp.created)));
                         $table.append($row);
                     });
@@ -125,12 +141,7 @@
 
     span.current {
         cursor: auto !important;
-        /*background-color: #6E6E6E !important;*/
-        /*color: #ffffff;*/
         font-weight: bold;
-        /*padding: 5px 7px;*/
-        /*border: 1px solid #000000;*/
-        /*margin-right: 4px;*/
     }
 
     td.footerContent span a {
