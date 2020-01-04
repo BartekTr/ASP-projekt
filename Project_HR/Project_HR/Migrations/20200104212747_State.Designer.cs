@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Project_HR.Models;
 
 namespace Project_HR.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20200104212747_State")]
+    partial class State
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,7 +190,7 @@ namespace Project_HR.Migrations
                         .HasConstraintName("FK_JobApplication_JobOffer")
                         .IsRequired();
 
-                    b.HasOne("Project_HR.Models.State", "State")
+                    b.HasOne("Project_HR.Models.State", null)
                         .WithMany("JobApplication")
                         .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Cascade)

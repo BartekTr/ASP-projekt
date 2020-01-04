@@ -10,8 +10,10 @@ namespace Project_HR.Models
         public bool ContactAgreement { get; set; }
         public string CvUrl { get; set; }
         public int UserId { get; set; }
-
+        public int StateId { get; set; }
         public virtual JobOffer Offer { get; set; }
         public virtual User User { get; set; }
+        public virtual State State { get; set; }
+
     }
 }

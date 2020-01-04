@@ -19,6 +19,7 @@ namespace Project_HR.Models
         public virtual DbSet<JobApplication> JobApplication { get; set; }
         public virtual DbSet<JobOffer> JobOffer { get; set; }
         public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<State> State { get; set; }
         public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
