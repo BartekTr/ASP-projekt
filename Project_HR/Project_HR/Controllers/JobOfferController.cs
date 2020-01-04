@@ -25,6 +25,16 @@ namespace Project_HR.Controllers
         }
 
         [HttpGet]
+        public JsonResult  GetCompany(int id = 1)
+        {
+            if (id != 0)
+                return Json(_context.Company.FirstOrDefault(x => x.Id == id).Name);
+            else
+                return Json("nazwa");
+        }
+
+
+        [HttpGet]
         public PagingViewModel GetData(int pageSize = 4, string search = "", int pageNo = 1)
         {
             int totalPage, totalRecord;
@@ -33,8 +43,7 @@ namespace Project_HR.Controllers
                 res = _context.JobOffer.Where(x => x.JobTitle.Contains(search)).ToList();
             else
                 res = _context.JobOffer.ToList();
-            //foreach (var r in res)
-            //    r.Company = _context.Company.FirstOrDefault(x => x.Id == r.CompanyId);
+
             totalRecord = res.Count();
             totalPage = (totalRecord / pageSize) + ((totalRecord % pageSize) > 0 ? 1 : 0);
             var record = (from u in res
