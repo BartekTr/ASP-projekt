@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_HR.Models;
-
+using System.Web;
 namespace Project_HR.Controllers
 {
     [Route("[controller]/[action]")]
@@ -19,15 +19,48 @@ namespace Project_HR.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
+        public ActionResult Index()
         {
-            if (string.IsNullOrEmpty(searchString))
-                return View(await _context.JobOffer.Include(x => x.Company).ToListAsync());
-
-            List<JobOffer> searchResult = await _context.JobOffer.Include(x => x.Company).Where(o => o.JobTitle.Contains(searchString)).ToListAsync();
-            return View(searchResult);
+            return View();
         }
+
+        [HttpGet]
+        public PagingViewModel GetData(int pageSize = 4, string search = "", int pageNo = 1)
+        {
+            int totalPage, totalRecord;
+            List<JobOffer> res;
+            if (search != null)
+                res = _context.JobOffer.Where(x => x.JobTitle.Contains(search)).ToList();
+            else
+                res = _context.JobOffer.ToList();
+            //foreach (var r in res)
+            //    r.Company = _context.Company.FirstOrDefault(x => x.Id == r.CompanyId);
+            totalRecord = res.Count();
+            totalPage = (totalRecord / pageSize) + ((totalRecord % pageSize) > 0 ? 1 : 0);
+            var record = (from u in res
+                          orderby u.SalaryFrom, u.SalaryTo
+                          select u).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+
+            PagingViewModel empData = new PagingViewModel
+            {
+                JobOffers = record,
+                TotalPage = totalPage
+            };
+
+            return empData;
+        }
+
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString, int page = 1)
+        //{
+        //    if (string.IsNullOrEmpty(searchString))
+        //        return View(await _context.JobOffer.Include(x => x.Company).ToListAsync());
+
+        //    List<JobOffer> searchResult = await _context.JobOffer.Include(x => x.Company).Where(o => o.JobTitle.Contains(searchString)).ToListAsync();
+        //    return View(searchResult);
+        //}
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -55,7 +88,7 @@ namespace Project_HR.Controllers
                 return NotFound($"offer not found in DB");
             }
 
-            return RedirectToAction("Create", "JobApplications", new { offerId = id});
+            return RedirectToAction("Create", "JobApplications", new { offerId = id });
         }
 
         [HttpPost]
@@ -128,7 +161,7 @@ namespace Project_HR.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == id && x.Company!=null);
+            var offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == id && x.Company != null);
             offer.Company = await _context.Company.FirstOrDefaultAsync(x => x.Id == offer.CompanyId);
             return View(offer);
         }
