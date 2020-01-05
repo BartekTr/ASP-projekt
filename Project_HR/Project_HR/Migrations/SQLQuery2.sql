@@ -1,10 +1,10 @@
-USE [ASP_Project02]
+USE [ASP_Projekt]
 GO
 SET IDENTITY_INSERT [dbo].[Company] ON 
 
-INSERT [dbo].[Company] ([Id], [Name]) VALUES (1, N'Daftcode')
-INSERT [dbo].[Company] ([Id], [Name]) VALUES (2, N'Asseco')
-INSERT [dbo].[Company] ([Id], [Name]) VALUES (3, N'Najlepsza_Firma')
+INSERT [dbo].[Company] ([Id], [Name], [Description]) VALUES (1, N'Daftcode', N'Dobra firma')
+INSERT [dbo].[Company] ([Id], [Name], [Description]) VALUES (2, N'Asseco', N'Œrednia firma')
+INSERT [dbo].[Company] ([Id], [Name], [Description]) VALUES (3, N'Najlepsza_Firma', N'Dobrze p³aci')
 SET IDENTITY_INSERT [dbo].[Company] OFF
 SET IDENTITY_INSERT [dbo].[Role] ON 
 

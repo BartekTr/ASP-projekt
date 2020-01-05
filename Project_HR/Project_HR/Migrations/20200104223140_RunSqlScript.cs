@@ -8,8 +8,8 @@ namespace Project_HR.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var sqlFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"SQLQuery2.sql");
-            migrationBuilder.Sql(File.ReadAllText(sqlFile));
+            //var sqlFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"SQLQuery2.sql");
+            //migrationBuilder.Sql(File.ReadAllText(sqlFile));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

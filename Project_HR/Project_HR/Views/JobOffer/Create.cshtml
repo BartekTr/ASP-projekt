@@ -7,8 +7,7 @@
 <div class="row page-box">
     <div class="col-sm-12">
         <h2>New Job Offer</h2>
-        @using (Html.BeginForm("Create"))
-        {
+        <form method="post" class="col-sm-6" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" id="form">
             @Html.AntiForgeryToken()
             <div class="form-group">
                 @Html.LabelFor(m => m.JobTitle)
@@ -63,7 +62,21 @@
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Create</button>
             </div>
-        }
+            @Html.ActionLink("Go back to Job Offers", "Index", "JobOffer", null, new { @class = "btn btn-primary" })
+        </form>
     </div>
 </div>
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/ajax/jquery.unobtrusive-ajax.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+@section scripts{
+    <script>
+        completed = () => {
+            $("#form")[0].reset();
+            alert('You just added new job offer.');
+        };
+    </script>
+}
