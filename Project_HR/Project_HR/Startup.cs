@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Project_HR.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 
 namespace Project_HR
 {
@@ -30,6 +32,9 @@ namespace Project_HR
                 options.UseSqlServer(
                 Configuration.GetConnectionString("TestConnection")
             ));
+            services.AddAuthentication(AzureADB2CDefaults.AuthenticationScheme)
+                .AddAzureADB2C(options => Configuration.Bind("AzureAdB2C", options));
+
             services.AddControllersWithViews();
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -62,6 +67,7 @@ namespace Project_HR
                 });
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
