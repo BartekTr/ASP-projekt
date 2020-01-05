@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project_HR.Models
 {
@@ -7,6 +8,7 @@ namespace Project_HR.Models
     {
         public int Id { get; set; }
         public int OfferId { get; set; }
+        [Required]
         public bool ContactAgreement { get; set; }
         public string CvUrl { get; set; }
         public int UserId { get; set; }

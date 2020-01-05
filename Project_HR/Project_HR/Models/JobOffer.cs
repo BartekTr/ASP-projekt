@@ -26,7 +26,11 @@ namespace Project_HR.Models
         public DateTime Created { get; set; }
         public string Location { get; set; }
         [Required]
+        [MinLength(5)]
         public string Description { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyy-MM-dd}")]
+        [Display(Name = "Valid until")]
         public DateTime? ValidUntil { get; set; }
         public int? Hrid { get; set; }
 
