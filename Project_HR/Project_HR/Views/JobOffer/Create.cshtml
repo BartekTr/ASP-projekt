@@ -7,7 +7,7 @@
 <div class="row page-box">
     <div class="col-sm-12">
         <h2>New Job Offer</h2>
-        <form method="post" class="col-sm-6" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed">
+        <form method="post" class="col-sm-6" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" id="form">
             @Html.AntiForgeryToken()
             <div class="form-group">
                 @Html.LabelFor(m => m.JobTitle)
@@ -62,6 +62,7 @@
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Create</button>
             </div>
+            @Html.ActionLink("Go back to Job Offers", "Index", "JobOffer", null, new { @class = "btn btn-primary" })
         </form>
     </div>
 </div>
@@ -74,7 +75,8 @@
 @section scripts{
     <script>
         completed = () => {
-            alert('Posted using Unobtrusive AJAX');
+            $("#form")[0].reset();
+            alert('You just added new job offer.');
         };
     </script>
 }

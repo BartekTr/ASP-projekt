@@ -13,7 +13,19 @@
         </div>
         <div id="updatePanel">
         </div>
-        Page size: <input type="number" name="paginator" id="pag" value="4" oninput="fetchData(1)" />
+        <div style="display:inline-block">
+            Page size: <input type="number" name="paginator" id="pag" value="4" oninput="fetchData(1)" />
+        </div>
+        <div style="display:inline-block">
+            Sort by: 
+            <select onchange="fetchData(1)" id="sel">
+                <option value="JobTitle">Job Title</option>
+                <option value="Company">Company</option>
+                <option value="Location">Location</option>
+                <option value="Created">Created</option>
+            </select>
+        </div>
+
         <br /><br />
         @Html.ActionLink("Create job offer", "Create", "JobOffer", null, new { @class = "btn btn-primary" })
     </div>
@@ -56,7 +68,7 @@
             $.ajax({
                 url: '/JobOffer/GetData',
                 type: 'GET',
-                data: { pageNo: pageNo, search: $("#mysearch").val(), pageSize: $("#pag").val() },
+                data: { pageNo: pageNo, search: $("#mysearch").val(), pageSize: $("#pag").val(), option: $("#sel").val() },
                 dataType: 'json',
                 success: function (data) {
                     var $table = $('<table/>').addClass('table table-striped table-hover');
@@ -81,7 +93,7 @@
 
                     if (totalPage > 0) {
                         for (var i = 1; i <= totalPage; i++) {
-                            var $page = $('<span/>').addClass(i == currentPage ? "current" : "");
+                            var $page = $('<span/>').addClass(i == pageNo ? "current" : "");
                             $page.html("<button onclick='fetchData(" + i + ");'>" + i + "</button>");
                             $footerTD.append($page);
                         }

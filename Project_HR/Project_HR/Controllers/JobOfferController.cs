@@ -36,7 +36,7 @@ namespace Project_HR.Controllers
 
 
         [HttpGet]
-        public PagingViewModel GetData(int pageSize = 4, string search = "", int pageNo = 1)
+        public PagingViewModel GetData(int pageSize = 4, string search = "", int pageNo = 1, string option = "JobTitle")
         {
             int totalPage, totalRecord;
             List<JobOffer> res;
@@ -47,9 +47,37 @@ namespace Project_HR.Controllers
 
             totalRecord = res.Count();
             totalPage = (totalRecord / pageSize) + ((totalRecord % pageSize) > 0 ? 1 : 0);
-            var record = (from u in res
-                          orderby u.SalaryFrom, u.SalaryTo
-                          select u).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+
+            List<JobOffer> record;
+            switch(option)
+            {
+                case "JobTitle":
+                    record = (from u in res
+                              orderby u.JobTitle
+                              select u).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+                    break;
+                case "Location":
+                    record = (from u in res
+                              orderby u.Location
+                              select u).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+                    break;
+                case "Created":
+                    record = (from u in res
+                              orderby u.Created
+                              select u).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+                    break;
+                case "Company":
+                    record = (from u in res
+                              orderby u.CompanyId
+                              select u).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+                    break;
+                default:
+                    record = (from u in res
+                              orderby u.SalaryFrom, u.SalaryTo
+                              select u).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+                    break;
+
+            }
 
             PagingViewModel empData = new PagingViewModel
             {
