@@ -7,8 +7,10 @@
 <div class="row page-box">
     <div class="col-sm-12">
         <h2>New Job Offer</h2>
-        @using (Html.BeginForm("Create"))
-        {
+        @*@using (Html.BeginForm("Create"))
+            {*@
+        <div id="formOuter">
+
             @Html.AntiForgeryToken()
             <div class="form-group">
                 @Html.LabelFor(m => m.JobTitle)
@@ -63,7 +65,8 @@
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Create</button>
             </div>
-        }
+        </div>
+        @*}*@
     </div>
 </div>
 

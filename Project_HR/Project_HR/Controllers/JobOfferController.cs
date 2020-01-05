@@ -60,17 +60,6 @@ namespace Project_HR.Controllers
             return empData;
         }
 
-
-
-        //[HttpGet]
-        //public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString, int page = 1)
-        //{
-        //    if (string.IsNullOrEmpty(searchString))
-        //        return View(await _context.JobOffer.Include(x => x.Company).ToListAsync());
-
-        //    List<JobOffer> searchResult = await _context.JobOffer.Include(x => x.Company).Where(o => o.JobTitle.Contains(searchString)).ToListAsync();
-        //    return View(searchResult);
-        //}
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -143,6 +132,7 @@ namespace Project_HR.Controllers
 
             return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
