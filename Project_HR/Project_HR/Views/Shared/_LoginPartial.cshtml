@@ -13,18 +13,18 @@
     <ul class="nav navbar-nav navbar-right">
         @if (!string.IsNullOrEmpty(options.EditProfilePolicyId))
         {
-            <li><a asp-area="AzureADB2C" asp-controller="Account" asp-action="EditProfile">Hello @User.Identity.Name!</a></li>
+            <li><a asp-area="AzureADB2C" asp-controller="Api" asp-action="EditProfile">Hello @User.Identity.Name!</a></li>
         }
         else
         {
             <li class="navbar-text">Hello @User.Identity.Name!</li>
         }
-        <li><a asp-area="AzureADB2C" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+        <li><a asp-area="AzureADB2C" asp-controller="Api" asp-action="SignOut">Sign out</a></li>
     </ul>
 }
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        <li><a asp-area="AzureADB2C" asp-controller="Account" asp-action="SignIn">Sign in</a></li>
+        <li><a asp-area="AzureADB2C" asp-controller="Api" asp-action="SignIn">Sign in</a></li>
     </ul>
 }
