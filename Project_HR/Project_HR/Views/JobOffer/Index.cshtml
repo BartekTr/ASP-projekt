@@ -36,8 +36,9 @@
                 </select>
             </div>
         }
-        <br /><br/>
-        @Html.ActionLink("Create job offer", "Create", "JobOffer", null, new { @class = "btn btn-primary" })
+        <br /><br />
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            @Html.ActionLink("Create job offer", "Create", "JobOffer", null, new { @class = "btn btn-primary" })
     </div>
 </div>
 

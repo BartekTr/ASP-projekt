@@ -144,6 +144,8 @@ namespace Project_HR
                             user = db.User.Include(x => x.Role).Where(x => x.EmailAdress == email).FirstOrDefault();
                         }
 
+                        var Identity = context.Principal.Identity as ClaimsIdentity;
+                        Identity.RemoveClaim(Identity.FindFirst("Name"));
                         context.Principal.Identities.First().AddClaim(new Claim(ClaimTypes.Role, user.Role.Name));
                         context.Principal.Identities.First().AddClaim(new Claim(context.Principal.Identities.First().NameClaimType, user.FirstName + " " + user.LastName));
                     }
