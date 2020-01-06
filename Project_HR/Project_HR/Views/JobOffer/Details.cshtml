@@ -48,7 +48,14 @@
             @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
             @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
-                @Html.ActionLink("Applicate", "Applicate", new { id = Model.Id }, new { @class = "btn btn-primary" })
+            {
+                @if (@ViewBag.LinkableId == -1)
+                    @Html.ActionLink("Applicate", "Applicate", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                    else
+                    {
+                        @Html.ActionLink("Edit application", "EditApplicate", new { id2 = ViewBag.LinkableId }, new { @class = "btn btn-primary" })
+                    }
+            }
             @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 @using (Html.BeginForm("Delete", "JobOffer", new { Model.Id }, FormMethod.Post, null, new { style = "display:inline;" }))
                 {
