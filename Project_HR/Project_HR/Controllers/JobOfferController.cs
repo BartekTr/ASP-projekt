@@ -43,22 +43,23 @@ namespace Project_HR.Controllers
             int totalPage, totalRecord;
             List<JobOffer> res;
             if (search != null)
-                res = _context.JobOffer.Where(x => x.JobTitle.Contains(search)).ToList();
+                res = _context.JobOffer.Include(x => x.JobApplication).Where(x => x.JobTitle.Contains(search)).ToList();
             else
-                res = _context.JobOffer.ToList();
+                res = _context.JobOffer.Include(x => x.JobApplication).ToList();
 
             if (User.Identity.IsAuthenticated && User.IsInRole("User"))
             {
                 string userEmail = User.Claims.FirstOrDefault(x => x.Type == "emails").Value;
+                User user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
                 switch (offers)
                 {
                     case "All":
                         break;
                     case "Applied":
-                        res = res.Where(x => x.JobApplication.Where(y => y.User.EmailAdress == userEmail).ToList().Count == 1).ToList();
+                        res = res.Where(x => x.JobApplication.Where(y => y.UserId == user.Id).ToList().Count >= 1).ToList();
                         break;
                     case "NotApplied":
-                        res = res.Where(x => x.JobApplication.Where(y => y.User.EmailAdress == userEmail).ToList().Count < 1).ToList();
+                        res = res.Where(x => x.JobApplication.Where(y => y.UserId == user.Id).ToList().Count < 1).ToList();
                         break;
                     default:
                         break;
