@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_HR.Models;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
+
 namespace Project_HR.Controllers
 {
     [Route("[controller]/[action]")]
@@ -160,7 +162,6 @@ namespace Project_HR.Controllers
 
             return View(model);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]

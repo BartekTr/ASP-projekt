@@ -22,18 +22,14 @@ namespace Project_HR.Controllers
         public IActionResult LogIn()
         {
             if (!User.Identity.IsAuthenticated)
-                //return RedirectToAction("SignIn", "Api");
-                return RedirectToAction("Index", "JobOffer");
-
+                return RedirectToAction("SignIn", "Api");
             if (User.IsInRole("Admin"))
                 return RedirectToAction("Index", "JobOffer");
             else if (User.IsInRole("HR"))
                 return RedirectToAction("Index", "JobOffer");
             else if (User.IsInRole("User"))
                 return RedirectToAction("Index", "JobOffer");
-            else
-                return RedirectToAction("Index", "JobOffer");
-            //else return SignOut();
+            else return SignOut();
         }
  
         [HttpGet]

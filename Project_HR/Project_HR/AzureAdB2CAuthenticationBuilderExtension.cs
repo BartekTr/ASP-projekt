@@ -111,11 +111,11 @@ namespace Project_HR
                 // Extract the code from the response notification
                 var code = context.ProtocolMessage.Code;
 
-                string signedInUserID = context.Principal.FindFirst(ClaimTypes.NameIdentifier).Value;
-
                 //var Identity = context.Principal.Identity as ClaimsIdentity;
                 //Identity.RemoveClaim(Identity.FindFirst("Name"));
 
+
+                string signedInUserID = context.Principal.FindFirst(ClaimTypes.NameIdentifier).Value;
                 IConfidentialClientApplication cca = ConfidentialClientApplicationBuilder.Create(AzureAdB2COptions.ClientId)
                     .WithB2CAuthority(AzureAdB2COptions.Authority)
                     .WithRedirectUri(AzureAdB2COptions.RedirectUri)
@@ -136,16 +136,9 @@ namespace Project_HR
                         if (user == null)
                         {
                             string firstName = context.Principal.Identities.First().Claims.Where(x => x.Type == ClaimTypes.GivenName).First().Value;
-                            //string lastName = context.Principal.Identities.First().Claims.Where(x => x.Type == ClaimTypes.Surname).First().Value;
+                            string lastName = context.Principal.Identities.First().Claims.Where(x => x.Type == ClaimTypes.Surname).First().Value;
 
-                            var last= context.Principal.Identities.First().Claims.Where(x => x.Type == ClaimTypes.Surname).FirstOrDefault();
-                            string lastname;
-                            if (last == null)
-                                lastname = "cool";
-                            else
-                                lastname = last.Value;
-                            //RoleId = Ids.UserRoleId
-                            db.User.Add(new User() { EmailAdress = email, RoleId = 1, FirstName = firstName, LastName = lastname, PhoneNumber = "111111111" });
+                            db.User.Add(new User() { EmailAdress = email, RoleId = 3, FirstName = firstName, LastName = lastName, PhoneNumber = "111111111" });
                             db.SaveChanges();
 
                             user = db.User.Include(x => x.Role).Where(x => x.EmailAdress == email).FirstOrDefault();
@@ -160,9 +153,7 @@ namespace Project_HR
 
                 try
                 {
-                    List<string> costam = new List<string>();
-                    costam.Add("");
-                    AuthenticationResult result = await cca.AcquireTokenByAuthorizationCode(costam, code)
+                    AuthenticationResult result = await cca.AcquireTokenByAuthorizationCode(AzureAdB2COptions.ApiScopes.Split(' '), code)
                         .ExecuteAsync();
                     context.HandleCodeRedemption(result.AccessToken, result.IdToken);
                 }

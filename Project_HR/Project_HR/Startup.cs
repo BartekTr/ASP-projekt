@@ -42,8 +42,7 @@ namespace Project_HR
                 sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
             })
-            .AddAzureAdB2C(options => Configuration.Bind("AzureAdB2C", options))
-            .AddCookie();
+            .AddAzureAdB2C(options => Configuration.Bind("AzureAdB2C", options)).AddCookie();
 
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
@@ -54,7 +53,7 @@ namespace Project_HR
             });
 
             services.AddControllersWithViews();
-            services.AddMvc();
+            services.AddMvcCore();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
@@ -64,6 +63,11 @@ namespace Project_HR
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Use((context, next) =>
+            {
+                context.Request.Scheme = "https";
+                return next();
+            });
             if (env.IsDevelopment())
             {
                 IdentityModelEventSource.ShowPII = true;

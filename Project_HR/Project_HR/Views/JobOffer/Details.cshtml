@@ -11,10 +11,10 @@
     </div>
     <div class="col-sm-4">
         <div class="offer-details">
-                <div>
-                    <label>Company:</label>
-                    <span>@Model.Company.Name</span>
-                </div>
+            <div>
+                <label>Company:</label>
+                <span>@Model.Company.Name</span>
+            </div>
             <div>
                 <label>Location:</label>
                 <span>@Model.Location</span>
@@ -45,13 +45,16 @@
                 </div>
             }
         <div>
-            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
-            @Html.ActionLink("Applicate", "Applicate", new { id = Model.Id }, new { @class = "btn btn-primary" })
-            @using (Html.BeginForm("Delete", "JobOffer", new { Model.Id }, FormMethod.Post, null, new { style = "display:inline;" }))
-            {
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-danger">Delete</button>
-            }
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+            @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                @Html.ActionLink("Applicate", "Applicate", new { id = Model.Id }, new { @class = "btn btn-primary" })
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                @using (Html.BeginForm("Delete", "JobOffer", new { Model.Id }, FormMethod.Post, null, new { style = "display:inline;" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                }
         </div>
         </div>
     </div>
