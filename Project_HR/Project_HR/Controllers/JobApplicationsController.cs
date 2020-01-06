@@ -83,13 +83,16 @@ namespace Project_HR.Controllers
             {
                 return View(model);
             }
+            string userEmail = User.Claims.FirstOrDefault(x => x.Type == "emails").Value;
+            var user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
             JobApplication ja = new JobApplication
             {
                 Id = model.Id,
                 OfferId = model.OfferId,
-                UserId = 2,
+                UserId = user.Id,
                 CvUrl = model.CvUrl,
-                ContactAgreement = model.ContactAgreement
+                ContactAgreement = model.ContactAgreement,
+                StateId = 1 //pending
             };
             ja.User = await _context.User.FirstOrDefaultAsync(x => x.Id == ja.UserId);
             ja.Offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == ja.OfferId);
@@ -101,61 +104,40 @@ namespace Project_HR.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: JobApplications/Edit/5
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return BadRequest($"id shouldn't not be null");
+            }
+            var app = await _context.JobApplication.FirstOrDefaultAsync(x => x.Id == id.Value);
+            if (app == null)
+            {
+                return NotFound($"offer not found in DB");
             }
 
-            var jobApplication = await _context.JobApplication.FindAsync(id);
-            if (jobApplication == null)
-            {
-                return NotFound();
-            }
-            ViewData["OfferId"] = new SelectList(_context.JobOffer, "Id", "Description", jobApplication.OfferId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "EmailAdress", jobApplication.UserId);
-            return View(jobApplication);
+            return View(app);
         }
 
-        // POST: JobApplications/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,OfferId,ContactAgreement,CvUrl,UserId")] JobApplication jobApplication)
+        public async Task<ActionResult> Edit(JobApplication model)
         {
-            if (id != jobApplication.Id)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return View();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(jobApplication);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!JobApplicationExists(jobApplication.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["OfferId"] = new SelectList(_context.JobOffer, "Id", "Description", jobApplication.OfferId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "EmailAdress", jobApplication.UserId);
-            return View(jobApplication);
+            var app = await _context.JobApplication.FirstOrDefaultAsync(x => x.Id == model.Id);
+            app.ContactAgreement = model.ContactAgreement;
+            app.CvUrl = model.CvUrl;
+            _context.Update(app);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
+
 
         // GET: JobApplications/Delete/5
         [ApiExplorerSettings(IgnoreApi = true)]

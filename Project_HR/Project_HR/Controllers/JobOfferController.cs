@@ -28,7 +28,7 @@ namespace Project_HR.Controllers
         }
 
         [HttpGet]
-        public JsonResult  GetCompany(int id = 1)
+        public JsonResult GetCompany(int id = 1)
         {
             if (id != 0)
                 return Json(_context.Company.FirstOrDefault(x => x.Id == id).Name);
@@ -67,7 +67,7 @@ namespace Project_HR.Controllers
             totalRecord = res.Count();
             totalPage = (totalRecord / pageSize) + ((totalRecord % pageSize) > 0 ? 1 : 0);
             List<JobOffer> record;
-            switch(option)
+            switch (option)
             {
                 case "JobTitle":
                     record = (from u in res
@@ -136,6 +136,17 @@ namespace Project_HR.Controllers
 
             return RedirectToAction("Create", "JobApplications", new { offerId = id });
         }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> EditApplicate(int? id2)
+        {
+            if (id2 == null)
+            {
+                return BadRequest($"id shouldn't not be null");
+            }
+            return RedirectToAction("Edit", "JobApplications", new { id = id2 });
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -209,7 +220,16 @@ namespace Project_HR.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Details(int id)
         {
-            var offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == id && x.Company != null);
+            var offer = await _context.JobOffer.Include(j => j.JobApplication).FirstOrDefaultAsync(x => x.Id == id && x.Company != null);
+            ViewBag.LinkableId = -1;
+            if (User.Identity.IsAuthenticated)
+            {
+                string userEmail = User.Claims.FirstOrDefault(x => x.Type == "emails").Value;
+                var user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
+                var a = offer.JobApplication.FirstOrDefault(x => x.UserId == user.Id);
+                if (a != null)
+                    ViewBag.LinkableId = a.Id;
+            }
             offer.Company = await _context.Company.FirstOrDefaultAsync(x => x.Id == offer.CompanyId);
             return View(offer);
         }
