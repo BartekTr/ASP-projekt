@@ -17,7 +17,7 @@
         }
         else
         {
-            <li class="navbar-text">Hello @User.Identity.IsAuthenticated!</li>
+            <li class="navbar-text">Hello @User.Identity.Name!</li>
         }
         <li><a asp-area="AzureADB2C" asp-controller="Api" asp-action="SignOut">Sign out</a></li>
     </ul>
