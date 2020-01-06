@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Project_HR
 {
@@ -52,8 +54,13 @@ namespace Project_HR
                 options.Cookie.IsEssential = true;
             });
 
-            services.AddControllersWithViews();
-            services.AddMvcCore();
+            //services.AddControllersWithViews();
+            //services.AddMvcCore();
+            services.AddMvcCore(option => option.EnableEndpointRouting = false)
+                            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                            .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            services.AddControllersWithViews().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });

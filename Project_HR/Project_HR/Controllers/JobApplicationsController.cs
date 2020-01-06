@@ -29,11 +29,38 @@ namespace Project_HR.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery(Name = "search")] string searchString)
         {
-            if (string.IsNullOrEmpty(searchString))
-                return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).ToListAsync());
+            List<JobApplication> searchResult = new List<JobApplication>();
+            if (User.Identity.IsAuthenticated)
+            {
+                string userEmail = User.Claims.FirstOrDefault(x => x.Type == "emails").Value;
+                if (User.IsInRole("User"))
+                {
+                    if (string.IsNullOrEmpty(searchString))
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).
+                            Where(j => j.User.EmailAdress == userEmail).ToListAsync());
 
-            List<JobApplication> searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User)
-                .Where(j => j.Offer.JobTitle.Contains(searchString)).ToListAsync();
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User)
+                        .Where(j => j.Offer.JobTitle.Contains(searchString) && j.User.EmailAdress == userEmail).ToListAsync();
+                }
+                else if (User.IsInRole("HR"))
+                {
+                    var user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
+                    if (string.IsNullOrEmpty(searchString))
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).
+                            Where(j => j.Offer.Hrid == user.Id).ToListAsync());
+
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Where(j => j.Offer.Hrid != null)
+                        .Where(j => j.Offer.JobTitle.Contains(searchString) && j.Offer.Hrid == user.Id).ToListAsync();
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(searchString))
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).ToListAsync());
+
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User)
+                        .Where(j => j.Offer.JobTitle.Contains(searchString)).ToListAsync();
+                }
+            }
             return View(searchResult);
         }
         // GET: JobApplications/Details/5

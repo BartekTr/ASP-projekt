@@ -18,7 +18,7 @@ namespace Project_HR.Controllers
         {
             return View();
         }
-        [AllowAnonymous]
+        [Authorize]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
