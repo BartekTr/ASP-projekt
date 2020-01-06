@@ -38,7 +38,7 @@ namespace Project_HR.Controllers
 
 
         [HttpGet]
-        public PagingViewModel GetData(int pageSize = 4, string search = "", int pageNo = 1, string option = "JobTitle")
+        public PagingViewModel GetData(int pageSize = 4, string search = "", int pageNo = 1, string option = "JobTitle", string offers = "All")
         {
             int totalPage, totalRecord;
             List<JobOffer> res;
@@ -47,9 +47,25 @@ namespace Project_HR.Controllers
             else
                 res = _context.JobOffer.ToList();
 
+            if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+            {
+                string userEmail = User.Claims.FirstOrDefault(x => x.Type == "emails").Value;
+                switch (offers)
+                {
+                    case "All":
+                        break;
+                    case "Applied":
+                        res = res.Where(x => x.JobApplication.Where(y => y.User.EmailAdress == userEmail).ToList().Count == 1).ToList();
+                        break;
+                    case "NotApplied":
+                        res = res.Where(x => x.JobApplication.Where(y => y.User.EmailAdress == userEmail).ToList().Count < 1).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }
             totalRecord = res.Count();
             totalPage = (totalRecord / pageSize) + ((totalRecord % pageSize) > 0 ? 1 : 0);
-
             List<JobOffer> record;
             switch(option)
             {
@@ -78,7 +94,6 @@ namespace Project_HR.Controllers
                               orderby u.SalaryFrom, u.SalaryTo
                               select u).Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
                     break;
-
             }
 
             PagingViewModel empData = new PagingViewModel
