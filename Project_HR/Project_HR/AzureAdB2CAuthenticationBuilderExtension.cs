@@ -145,7 +145,8 @@ namespace Project_HR
                         }
 
                         var Identity = context.Principal.Identity as ClaimsIdentity;
-                        Identity.RemoveClaim(Identity.FindFirst("Name"));
+                        if(Identity.FindFirst("Name") != null)
+                            Identity.RemoveClaim(Identity.FindFirst("Name"));
                         context.Principal.Identities.First().AddClaim(new Claim(ClaimTypes.Role, user.Role.Name));
                         context.Principal.Identities.First().AddClaim(new Claim(context.Principal.Identities.First().NameClaimType, user.FirstName + " " + user.LastName));
                     }
