@@ -10,21 +10,22 @@
     <div class="col-md-4">
         @using (Html.BeginForm("Create"))
         {
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(x => x.OfferId, new { id = "OfferId" })
-            <div class="form-group">
-                @Html.LabelFor(m => m.CvUrl)
-                @Html.EditorFor(m => m.CvUrl, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(m => m.CvUrl, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.ContactAgreement)
-                @Html.CheckBoxFor(m => m.ContactAgreement, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(m => m.ContactAgreement, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Create</button>
-            </div>
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.OfferId, new { id = "OfferId" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.CvUrl)
+            @Html.EditorFor(m => m.CvUrl, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(m => m.CvUrl, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ContactAgreement)
+            @Html.CheckBoxFor(m => m.ContactAgreement, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(m => m.ContactAgreement, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+        }
         }
     </div>
 </div>

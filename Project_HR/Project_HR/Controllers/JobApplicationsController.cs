@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Project_HR.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -148,7 +152,7 @@ namespace Project_HR.Controllers
             {
                 Id = model.Id,
                 OfferId = model.OfferId,
-                Offer = _context.JobOffer.FirstOrDefault(x=>x.Id == model.OfferId),
+                Offer = _context.JobOffer.FirstOrDefault(x => x.Id == model.OfferId),
                 UserId = user.Id,
                 CvUrl = model.CvUrl,
                 ContactAgreement = model.ContactAgreement,
@@ -168,7 +172,6 @@ namespace Project_HR.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task PostMessage(string email)
         {
