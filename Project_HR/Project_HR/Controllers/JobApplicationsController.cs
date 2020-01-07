@@ -23,7 +23,7 @@ namespace Project_HR.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Index()
         {
-            var dataContext = _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State);
+            var dataContext = _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).Include(j => j.Offer.Company);
             return View(await dataContext.ToListAsync());
         }
         [HttpGet]
@@ -36,30 +36,30 @@ namespace Project_HR.Controllers
                 if (User.IsInRole("User"))
                 {
                     if (string.IsNullOrEmpty(searchString))
-                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).Include(j => j.Offer.Company).
                             Where(j => j.User.EmailAdress == userEmail).ToListAsync());
 
-                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State)
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).Include(j => j.Offer.Company)
                         .Where(j => j.Offer.JobTitle.Contains(searchString) && j.User.EmailAdress == userEmail).ToListAsync();
                 }
                 else if (User.IsInRole("HR"))
                 {
                     var user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
                     if (string.IsNullOrEmpty(searchString))
-                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).Include(j => j.Offer.Company).
                             Where(j => j.Offer.Hrid == user.Id).ToListAsync());
 
-                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State)
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).Include(j => j.Offer.Company)
                         .Where(j => j.Offer.Hrid != null)
                         .Where(j => j.Offer.JobTitle.Contains(searchString) && j.Offer.Hrid == user.Id).ToListAsync();
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(searchString))
-                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.State)
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.State).Include(j => j.Offer.Company)
                             .Include(j => j.User).ToListAsync());
 
-                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State)
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).Include(j => j.Offer.Company)
                         .Where(j => j.Offer.JobTitle.Contains(searchString)).ToListAsync();
                 }
             }
@@ -87,7 +87,7 @@ namespace Project_HR.Controllers
             //auth
             string userEmail = User.Claims.FirstOrDefault(x => x.Type == "emails").Value;
             var user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
-            if (!((user.Id == jobApplication.UserId && User.IsInRole("User")) ||(user.Id == jobApplication.Offer.Hrid && User.IsInRole("HR"))))
+            if (!((user.Id == jobApplication.UserId && User.IsInRole("User")) || (user.Id == jobApplication.Offer.Hrid && User.IsInRole("HR"))))
                 return RedirectToAction("Index", "Home");
             return View(jobApplication);
         }
