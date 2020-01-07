@@ -44,7 +44,7 @@ namespace Project_HR.Controllers
                 var appsToRemove = await _context.JobApplication.Where(x => x.UserId == user.Id).ToListAsync();
                 _context.JobApplication.RemoveRange(appsToRemove);
             }
-            user.RoleId = 2//hr role;
+            user.RoleId = 2;//hr role;
             _context.Update(user);
             var offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == offerId);
             offer.Hrid = user.Id;
