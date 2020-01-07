@@ -45,8 +45,27 @@ namespace Project_HR.Controllers
             offer.Hrid = user.Id;
             _context.Update(offer);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "JobOffer", new { id=offerId});
+            return RedirectToAction("Details", "JobOffer", new { id = offerId });
         }
+
+        [HttpPost]
+        public async Task<ActionResult> Remove(int? offerId, int? userId)
+        {
+            if (offerId == null || userId == null)
+            {
+                return BadRequest($"id should not be null");
+            }
+            var user = await _context.User.FirstOrDefaultAsync(x => x.Id == userId);
+            if (_context.JobOffer.Where(x => x.Hrid == userId).Count() <= 1)
+                user.RoleId = 3; //user role
+            _context.Update(user);
+            var offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == offerId);
+            offer.Hrid = null;
+            _context.Update(offer);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "JobOffer", new { id = offerId });
+        }
+
     }
 }
 
