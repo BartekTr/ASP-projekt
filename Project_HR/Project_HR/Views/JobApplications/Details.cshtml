@@ -4,39 +4,73 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>JobApplication</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.ContactAgreement)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ContactAgreement)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.CvUrl)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.CvUrl)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Offer)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Offer.Description)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.User.EmailAdress)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="row page-box">
+    <h1>Application for @Model.Offer.JobTitle in @Model.Offer.Company.Name</h1>
+    <div class="col-sm-8">
+        <div class="offer-description" id="previewMarkdown">
+            @Model.Offer.Description
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="offer-details">
+            <div>
+                <label>Company:</label>
+                <span>@Model.Offer.Company.Name</span>
+            </div>
+            <div>
+                <label>Location:</label>
+                <span>@Model.Offer.Location</span>
+            </div>
+            @if (Model.Offer.SalaryFrom.HasValue)
+            {
+                <div>
+                    <label>Salary from:</label>
+                    <span>@Model.Offer.SalaryFrom (PLN)</span>
+                </div>
+            }
+            @if (Model.Offer.SalaryTo.HasValue)
+            {
+                <div>
+                    <label>Salary to:</label>
+                    <span>@Model.Offer.SalaryTo (PLN)</span>
+                </div>
+            }
+            <div>
+                <label>Created:</label>
+                <span>@Model.Offer.Created</span>
+            </div>
+            @if (Model.Offer.ValidUntil.HasValue)
+            {
+                <div>
+                    <label>Valid:</label>
+                    <span>@Model.Offer.ValidUntil.Value.Subtract(DateTime.Now).Days days (@Model.Offer.ValidUntil)</span>
+                </div>
+            }
+        <div>
+            @if (Model.StateId == 1)
+            {
+                @using (Html.BeginForm("ChangeState", "JobApplications", new { appId = Model.Id, option = 2 }, FormMethod.Post, null, new { style = "display:inline;" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                }
+                @using (Html.BeginForm("ChangeState", "JobApplications", new { appId = Model.Id, option = 3 }, FormMethod.Post, null, new { style = "display:inline;" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Reject</button>
+                }
+            }
+            else
+            {
+                <div>
+                    <label>State:</label>
+                    <span>@Model.State.Name</span>
+                </div>
+            }
+            <br />
+            <br />
+        </div>
+        </div>
+    </div>
+    @Html.ActionLink("Go back to Applications", "Index", "JobApplications", null, new { @class = "btn btn-primary" })
 </div>

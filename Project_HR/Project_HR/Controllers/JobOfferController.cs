@@ -173,8 +173,19 @@ namespace Project_HR.Controllers
             {
                 return BadRequest($"id should not be null");
             }
-
-            _context.JobOffer.Remove(new JobOffer() { Id = id.Value });
+            var offer = _context.JobOffer.FirstOrDefault(x => x.Id== id.Value);
+            if (offer.Hrid != null)
+            {
+                var user = _context.User.FirstOrDefault(x => x.Id == offer.Hrid);
+                if (_context.JobOffer.Where(x => x.Hrid == user.Id).Count() == 1)
+                {
+                    user.RoleId = 3; //user
+                    _context.Update(user);
+                }
+            }
+            var apps = _context.JobApplication.Where(x => x.OfferId == id.Value);
+            _context.JobApplication.RemoveRange(apps);
+            _context.JobOffer.Remove(offer);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }

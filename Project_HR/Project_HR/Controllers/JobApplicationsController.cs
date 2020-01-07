@@ -23,7 +23,7 @@ namespace Project_HR.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Index()
         {
-            var dataContext = _context.JobApplication.Include(j => j.Offer).Include(j => j.User);
+            var dataContext = _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State);
             return View(await dataContext.ToListAsync());
         }
         [HttpGet]
@@ -36,28 +36,30 @@ namespace Project_HR.Controllers
                 if (User.IsInRole("User"))
                 {
                     if (string.IsNullOrEmpty(searchString))
-                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).
                             Where(j => j.User.EmailAdress == userEmail).ToListAsync());
 
-                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User)
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State)
                         .Where(j => j.Offer.JobTitle.Contains(searchString) && j.User.EmailAdress == userEmail).ToListAsync();
                 }
                 else if (User.IsInRole("HR"))
                 {
                     var user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
                     if (string.IsNullOrEmpty(searchString))
-                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State).
                             Where(j => j.Offer.Hrid == user.Id).ToListAsync());
 
-                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Where(j => j.Offer.Hrid != null)
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State)
+                        .Where(j => j.Offer.Hrid != null)
                         .Where(j => j.Offer.JobTitle.Contains(searchString) && j.Offer.Hrid == user.Id).ToListAsync();
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(searchString))
-                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).ToListAsync());
+                        return View(await _context.JobApplication.Include(j => j.Offer).Include(j => j.State)
+                            .Include(j => j.User).ToListAsync());
 
-                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User)
+                    searchResult = await _context.JobApplication.Include(j => j.Offer).Include(j => j.User).Include(j => j.State)
                         .Where(j => j.Offer.JobTitle.Contains(searchString)).ToListAsync();
                 }
             }
@@ -75,14 +77,38 @@ namespace Project_HR.Controllers
             var jobApplication = await _context.JobApplication
                 .Include(j => j.Offer)
                 .Include(j => j.User)
+                .Include(j => j.State)
+                .Include(j => j.Offer.Company)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (jobApplication == null)
             {
                 return NotFound();
             }
-
+            //auth
+            string userEmail = User.Claims.FirstOrDefault(x => x.Type == "emails").Value;
+            var user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
+            if (!((user.Id == jobApplication.UserId && User.IsInRole("User")) ||(user.Id == jobApplication.Offer.Hrid && User.IsInRole("HR"))))
+                return RedirectToAction("Index", "Home");
             return View(jobApplication);
         }
+
+        [HttpPost]
+        public async Task<ActionResult> ChangeState(int? appId, int? option)
+        {
+            if (!User.IsInRole("HR"))
+                return RedirectToAction("Index", "Home");
+            if (option == null || appId == null)
+            {
+                return BadRequest($"id should not be null");
+            }
+            var app = await _context.JobApplication.FirstOrDefaultAsync(x => x.Id == appId.Value);
+            app.StateId = option.Value;
+            _context.Update(app);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "JobApplications", new { id = appId });
+        }
+
+
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Create(int? offerId)
