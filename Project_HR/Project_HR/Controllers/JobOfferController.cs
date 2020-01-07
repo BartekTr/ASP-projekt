@@ -221,7 +221,8 @@ namespace Project_HR.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Details(int id)
         {
-            var offer = await _context.JobOffer.Include(j => j.JobApplication).FirstOrDefaultAsync(x => x.Id == id && x.Company != null);
+            var offer = await _context.JobOffer.Include(j => j.JobApplication).Include(j => j.Hr)
+                .FirstOrDefaultAsync(x => x.Id == id && x.Company != null);
             ViewBag.LinkableId = -1;
             if (User.Identity.IsAuthenticated)
             {

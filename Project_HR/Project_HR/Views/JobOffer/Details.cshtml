@@ -44,25 +44,44 @@
                     <span>@Model.ValidUntil.Value.Subtract(DateTime.Now).Days days (@Model.ValidUntil)</span>
                 </div>
             }
-        <div>
-            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
-            @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
-            {
-                @if (@ViewBag.LinkableId == -1)
-                    @Html.ActionLink("Applicate", "Applicate", new { id = Model.Id }, new { @class = "btn btn-primary" })
-                    else
-                    {
-                        @Html.ActionLink("Edit application", "EditApplicate", new { id2 = ViewBag.LinkableId }, new { @class = "btn btn-primary" })
-                    }
-            }
-            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-                @using (Html.BeginForm("Delete", "JobOffer", new { Model.Id }, FormMethod.Post, null, new { style = "display:inline;" }))
+            <div>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
                 {
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    @if (@ViewBag.LinkableId == -1)
+                        @Html.ActionLink("Applicate", "Applicate", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                        else
+                        {
+                            @Html.ActionLink("Edit application", "EditApplicate", new { id2 = ViewBag.LinkableId }, new { @class = "btn btn-primary" })
+                        }
                 }
-        </div>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    @using (Html.BeginForm("Delete", "JobOffer", new { Model.Id }, FormMethod.Post, null, new { style = "display:inline;" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    }
+                    <br />
+                    <br />
+                    if (Model.Hrid == null)
+                        @Html.ActionLink("Choose HR", "Index", "HR", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                        else
+                        {
+                            @Model.Hr.FirstName @Model.Hr.LastName
+                            <div>
+                                is already chosen to HR of this offer
+                                @using (Html.BeginForm("Remove", "HR", new { offerId = Model.Id, userId = Model.Hrid }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                }
+                            </div>
+                        }
+
+                    }
+            </div>
         </div>
     </div>
     @Html.ActionLink("Go back to Job Offers", "Index", "JobOffer", null, new { @class = "btn btn-primary" })
