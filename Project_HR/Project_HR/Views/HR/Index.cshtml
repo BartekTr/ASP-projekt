@@ -1,0 +1,31 @@
+﻿@model Project_HR.Models.HRListViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+Select HR for @Model.Offer.JobTitle
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">User First Name</th>
+            <th scope="col">User Second Name</th>
+            <th scope="col">Choose to HR</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var app in Model.Users.OrderBy(o => o.FirstName))
+        {
+            <tr>
+                <td>@app.FirstName</td>
+                <td>@app.LastName</td>
+                <td>
+                    @using (Html.BeginForm("Choose", "HR", new { offerId = Model.Offer.Id, userId = app.Id}, FormMethod.Post, null, new { style = "display:inline;" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Choose</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
