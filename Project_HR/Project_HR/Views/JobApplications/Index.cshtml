@@ -23,7 +23,7 @@
                     <th scope="col">User First Name</th>
                     <th scope="col">User Second Name</th>
                     <th scope="col">State</th>
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("HR"))
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("HR") || User.IsInRole("User") )
                     {
                         <th scope="col">Details</th>
                     }
@@ -37,7 +37,7 @@
                         <td>@app.User.FirstName</td>
                         <td>@app.User.LastName</td>
                         <td>@app.State.Name</td>
-                        @if (User.Identity.IsAuthenticated && User.IsInRole("HR"))
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("HR") || User.IsInRole("User") )
                         {
                             <td>
                                 @Html.ActionLink("Details", "Details", "JobApplications", new { app.Id}, new { @class = "btn btn-primary" })

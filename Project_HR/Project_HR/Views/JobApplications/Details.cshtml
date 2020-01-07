@@ -13,9 +13,18 @@
     </div>
     <div class="col-sm-4">
         <div class="offer-details">
+            <h3> Job offer details:</h3>
             <div>
                 <label>Company:</label>
                 <span>@Model.Offer.Company.Name</span>
+            </div>
+            <div>
+                <label>Show company's description:</label>
+                <input type="checkbox" data-bind="checked: shouldShowMessage" />
+            </div>
+            <div data-bind="visible: shouldShowMessage">
+                <label> Company description:</label>
+                <span> @Model.Offer.Company.Description</span>
             </div>
             <div>
                 <label>Location:</label>
@@ -46,31 +55,58 @@
                     <span>@Model.Offer.ValidUntil.Value.Subtract(DateTime.Now).Days days (@Model.Offer.ValidUntil)</span>
                 </div>
             }
-        <div>
-            @if (Model.StateId == 1)
-            {
-                @using (Html.BeginForm("ChangeState", "JobApplications", new { appId = Model.Id, option = 2 }, FormMethod.Post, null, new { style = "display:inline;" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-primary">Approve</button>
-                }
-                @using (Html.BeginForm("ChangeState", "JobApplications", new { appId = Model.Id, option = 3 }, FormMethod.Post, null, new { style = "display:inline;" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger">Reject</button>
-                }
-            }
-            else
-            {
-                <div>
-                    <label>State:</label>
-                    <span>@Model.State.Name</span>
-                </div>
-            }
-            <br />
-            <br />
         </div>
+        <div class="user-details">
+            <h3> Application details:</h3>
+            <div>
+                <label>Cv:</label>
+                <span>@Model.CvUrl</span>
+            </div>
+            <div>
+                <label>Contact agreement:</label>
+                @Html.CheckBoxFor(m => m.ContactAgreement, new { @disabled = "disabled" })
+            </div>
+            <div>
+                <label>State:</label>
+                <span>@Model.State.Name</span>
+            </div>
+        </div>
+        <div>
+            @if (User.IsInRole("HR"))
+            {
+                @if (Model.StateId == 1)
+                {
+                    @using (Html.BeginForm("ChangeState", "JobApplications", new { appId = Model.Id, option = 2 }, FormMethod.Post, null, new { style = "display:inline;" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary">Approve</button>
+                    }
+                    @using (Html.BeginForm("ChangeState", "JobApplications", new { appId = Model.Id, option = 3 }, FormMethod.Post, null, new { style = "display:inline;" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                    }
+                }
+            }
+            @if (User.IsInRole("User"))
+            {
+                @Html.ActionLink("Edit", "Edit", new { Model.Id }, new { @class = "btn btn-primary" })
+                @using (Html.BeginForm("Delete", "JobApplications", new { Model.Id }, FormMethod.Post, null, new { style = "display:inline;" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                }
+            }
         </div>
     </div>
     @Html.ActionLink("Go back to Applications", "Index", "JobApplications", null, new { @class = "btn btn-primary" })
 </div>
+<script src="~/lib/knockout/knockout-3.5.1.js"></script>
+@section scripts{
+    <script type="text/javascript">
+        var viewModel = function (value) {
+            this.shouldShowMessage = ko.observable(value) // Message initially visible
+        };
+        ko.applyBindings(new viewModel(false));
+    </script>
+}
