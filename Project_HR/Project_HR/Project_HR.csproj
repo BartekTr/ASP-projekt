@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationInsightsResourceId>/subscriptions/07bce719-28ad-4ed2-8ee7-d11a3934dd23/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Project_HR</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/07bce719-28ad-4ed2-8ee7-d11a3934dd23/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Project_HR</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -14,6 +16,8 @@
     <PackageReference Include="FontAwesome" Version="4.7.0" />
     <PackageReference Include="jQuery.Validation" Version="1.19.1" />
     <PackageReference Include="knockoutjs" Version="3.5.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.12.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureADB2C.UI" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.0.0" />
@@ -40,6 +44,10 @@
   <ItemGroup>
     <None Include="wwwroot\lib\ajax\jquery.unobtrusive-ajax.js" />
     <None Include="wwwroot\lib\ajax\jquery.unobtrusive-ajax.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 </Project>
