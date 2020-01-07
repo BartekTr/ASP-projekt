@@ -16,6 +16,14 @@
                 <span>@Model.Company.Name</span>
             </div>
             <div>
+                <label>Show company's description:</label>
+                <input type="checkbox" data-bind="checked: shouldShowMessage"/>
+            </div>
+            <div data-bind="visible: shouldShowMessage">
+                <label> Company description:</label>
+                <span> @Model.Company.Description</span>
+            </div>
+            <div>
                 <label>Location:</label>
                 <span>@Model.Location</span>
             </div>
@@ -86,3 +94,13 @@
     </div>
     @Html.ActionLink("Go back to Job Offers", "Index", "JobOffer", null, new { @class = "btn btn-primary" })
 </div>
+
+<script src="~/lib/knockout/knockout-3.5.1.js"></script>
+@section scripts{
+    <script type="text/javascript">
+        var viewModel = function (value) {
+            this.shouldShowMessage = ko.observable(value) // Message initially visible
+        };
+        ko.applyBindings(new viewModel(false));
+    </script>
+}
