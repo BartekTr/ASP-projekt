@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Project_HR.Models;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace Project_HR.Controllers
 {
@@ -13,10 +16,12 @@ namespace Project_HR.Controllers
     public class JobApplicationsController : Controller
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public JobApplicationsController(DataContext context)
+        public JobApplicationsController(DataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: JobApplications
@@ -138,15 +143,22 @@ namespace Project_HR.Controllers
             }
             string userEmail = User.Claims.FirstOrDefault(x => x.Type == "emails").Value;
             var user = _context.User.FirstOrDefault(x => x.EmailAdress == userEmail);
+            var offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == model.OfferId);
             JobApplication ja = new JobApplication
             {
                 Id = model.Id,
                 OfferId = model.OfferId,
+                Offer = _context.JobOffer.FirstOrDefault(x=>x.Id == model.OfferId),
                 UserId = user.Id,
                 CvUrl = model.CvUrl,
                 ContactAgreement = model.ContactAgreement,
                 StateId = 1 //pending
             };
+            if (offer.Hrid != null)
+            {
+                var email = _context.User.FirstOrDefault(x => x.Id == offer.Hrid).EmailAdress;
+                await PostMessage(email);
+            }
             ja.User = await _context.User.FirstOrDefaultAsync(x => x.Id == ja.UserId);
             ja.Offer = await _context.JobOffer.FirstOrDefaultAsync(x => x.Id == ja.OfferId);
             ja.Offer.Company = await _context.Company.FirstOrDefaultAsync(x => x.Id == ja.Offer.CompanyId);
@@ -156,6 +168,21 @@ namespace Project_HR.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task PostMessage(string email)
+        {
+            var section = _configuration.GetSection("SendGrid");
+            var apiKey = section.GetValue<string>("SENDGRID_API_KEY");
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("truszkowski.bartlomiej@wp.pl", "Admin");
+            var to = new EmailAddress(email, "HR");
+            var subject = "App notify";
+            var htmlContent = "<strong>You have new application for your offer</strong>";
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
+            var response = await client.SendEmailAsync(msg);
+        }
+
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(int? id)
