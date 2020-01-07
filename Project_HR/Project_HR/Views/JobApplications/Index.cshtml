@@ -23,6 +23,10 @@
                     <th scope="col">User First Name</th>
                     <th scope="col">User Second Name</th>
                     <th scope="col">Contact Agreement</th>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("HR"))
+                    {
+                        <th scope="col">Details</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +37,12 @@
                         <td>@app.User.FirstName</td>
                         <td>@app.User.LastName</td>
                         <td>@app.ContactAgreement</td>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("HR"))
+                        {
+                            <td>
+                                @Html.ActionLink("Details", "Details", "JobApplications", null, new { @class = "btn btn-primary" })
+                            </td>
+                        }
                     </tr>
                 }
             </tbody>
