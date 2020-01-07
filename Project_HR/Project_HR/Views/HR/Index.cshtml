@@ -22,7 +22,7 @@ Select HR for @Model.Offer.JobTitle
                     @using (Html.BeginForm("Choose", "HR", new { offerId = Model.Offer.Id, userId = app.Id}, FormMethod.Post, null, new { style = "display:inline;" }))
                     {
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger">Choose</button>
+                        <button type="submit" class="btn btn-primary">Choose</button>
                     }
                 </td>
             </tr>
