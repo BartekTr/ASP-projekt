@@ -88,7 +88,7 @@
                     }
                 }
             }
-            @if (User.IsInRole("User"))
+            @if (User.IsInRole("User") && Model.StateId == 1)
             {
                 @Html.ActionLink("Edit", "Edit", new { Model.Id }, new { @class = "btn btn-primary" })
                 @using (Html.BeginForm("Delete", "JobApplications", new { Model.Id }, FormMethod.Post, null, new { style = "display:inline;" }))

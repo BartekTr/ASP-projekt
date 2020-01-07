@@ -10,7 +10,6 @@ using Project_HR.Models;
 
 namespace Project_HR.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         [AllowAnonymous]
